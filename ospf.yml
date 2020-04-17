@@ -1,0 +1,85 @@
+---
+  - hosts: all
+    become: true
+    tasks:
+      - name: enable forward
+        sysctl:
+          name: net.ipv4.ip_forward
+          value: '1'
+          sysctl_set: yes
+          state: present
+          reload: yes
+
+      - name: disable routing filter
+        sysctl:
+          name: net.ipv4.conf.all.rp_filter
+          value: "2"
+          sysctl_set: yes
+          state: present
+          reload: yes
+
+      - name: no ZeroConf
+        lineinfile:
+          path: /etc/sysconfig/network
+          line: "NOZEROCONF=yes"
+          state: present
+
+      - name: install epel
+        yum:
+          name: epel-release
+          state: present
+
+     - name: install traceroute
+        yum:
+          name: traceroute
+          state: present
+
+      - name: Install libyang
+        yum:
+          name: https://ci1.netdef.org/artifact/LIBYANG-YANGRELEASE/shared/build-10/CentOS-7-x86_64-Packages/libyang-0.16.111-0.x86_64.rpm
+          state: present
+
+      - name: install frr
+        yum:
+          name: https://github.com/FRRouting/frr/releases/download/frr-7.2/frr-7.2-01.el7.centos.x86_64.rpm
+          state: present
+
+      - name: if config
+        template:
+          src: templates/static.j2
+          dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.dev }}"
+          owner: root
+          group: root
+          mode: 0644
+        with_items:
+          - '{{ static }}'
+        notify: restart network
+
+      - name: frr config
+        template:
+          src: templates/ospfd.conf.j2
+          dest: "/etc/frr/ospfd.conf"
+          owner: frr
+          group: frrvty
+          mode: 0644
+        with_items:
+          - '{{ ospf }}'
+
+      - name: frr activate ospfd
+        replace:
+          path: /etc/frr/daemons
+          regexp: 'ospfd=no'
+          replace: 'ospfd=yes'
+
+      - name: ospfd enabled in systemd
+        systemd:
+          name: frr
+          enabled: true
+          state: restarted
+
+    handlers:
+      - name: restart network
+        systemd:
+          name: network
+          state: restarted
+

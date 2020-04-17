@@ -1,0 +1,17 @@
+hostname {{ item.hostname }}
+log file /var/log/frr/ospfd.log
+interface {{ item.dev1 }}
+ip ospf cost {{ item.cost1 }}
+ip ospf hello-interval 5
+ip ospf dead-interval 10
+interface {{ item.dev2 }}
+ip ospf cost {{ item.cost2  }}
+ip ospf hello-interval 5
+ip ospf dead-interval 10
+router ospf
+ospf router-id {{ item.id }}
+redistribute connected
+passive interface eth0
+network {{ item.lan }}  area 0.0.0.0
+network {{ item.wan1 }} area 0.0.0.0
+network {{ item.wan2 }} area 0.0.0.0

@@ -1,0 +1,26 @@
+static:
+  - dev: eth1
+    ip: 172.16.1.1
+    mask: 255.255.255.252
+    gw: 
+  - dev: eth2
+    ip: 172.16.3.1
+    mask: 255.255.255.252
+    gw: 
+  - dev: eth3
+    ip: 192.168.1.1
+    mask: 255.255.255.0
+    gw: 
+
+ospf:
+    hostname: Router1
+    dev1: eth1
+    cost1: 10
+    dev2: eth2
+    cost2: 100
+    id: 1.1.1.1
+    lan: 192.168.1.0/24
+    wan1: 172.16.1.0/30
+    wan2: 172.16.3.0/30
+
+
