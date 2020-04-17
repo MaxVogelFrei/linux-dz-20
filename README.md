@@ -96,7 +96,7 @@ default via 10.0.2.2 dev eth0 proto dhcp metric 100
 traceroute to 192.168.1.1 (192.168.1.1), 30 hops max, 60 byte packets
  1  192.168.1.1 (192.168.1.1)  0.370 ms  0.166 ms  0.309 ms
 ```
-
+Видно что Router1 маршрут к Router3 строит через Router2, а Router3 к Router1 напрямую  
 ## Симметричный роутинг
 цену линка eth1 на Router3 делаю равной цене линка eth2 на Router1 - 100  
 ```bash
