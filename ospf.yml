@@ -37,7 +37,7 @@
           name: epel-release
           state: present
 
-     - name: install traceroute
+      - name: install traceroute
         yum:
           name: traceroute
           state: present
