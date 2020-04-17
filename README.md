@@ -1,27 +1,21 @@
 # OSPF
-
 ![схема](dz-20.png)
-
 ## Задание
-
-- Поднять три виртуалки
-- Объединить их разными private network
-1. Поднять OSPF между машинами средствами программных маршрутизаторов на выбор: Quagga, FRR или BIRD
-2. Изобразить ассиметричный роутинг
-3. Сделать один из линков "дорогим", но что бы при этом роутинг был симметричным
+- Поднять три виртуалки  
+- Объединить их разными private network  
+1. Поднять OSPF между машинами средствами программных маршрутизаторов на выбор: Quagga, FRR или BIRD  
+2. Изобразить ассиметричный роутинг  
+3. Сделать один из линков "дорогим", но что бы при этом роутинг был симметричным  
 
 ## Решение
-
-Стенд из 3 машин настраивается с машины provision плейбуком [ospf.yml](ospf.yml)
-
+[Стенд](Vagrantfile) из 3 машин настраивается с машины provision плейбуком [ospf.yml](ospf.yml)  
+для успешного провижена нужен ip_forward=1 и доступ к TCP портам 10022, 11022, 12022 на адресе хоста 192.168.220.1  
 ## Установка FRR
-
 Отключаю фильтрацию маршрутов
 ```bash
 net.ipv4.conf.eth1.rp_filter=2
 ```
 FRR устанавливается из пакета с [github](https://github.com/FRRouting/frr/releases/download/frr-7.2/frr-7.2-01.el7.centos.x86_64.rpm)  
-
 в нем включается демон ospfd  
 ```bash
 /etc/frr/daemons
@@ -49,9 +43,8 @@ network {{ item.lan }}  area 0.0.0.0
 network {{ item.wan1 }} area 0.0.0.0
 network {{ item.wan2 }} area 0.0.0.0
 ```
-
 ## Ассиметричный роутинг
-на роутере 1 цена линка с роутером 3 = 100  
+на Router1 цена линка eth2 с Router3 = 100  
 ```bash
 [vagrant@Router1 ~]$ ip ro
 default via 10.0.2.2 dev eth0 proto dhcp metric 100 
@@ -69,7 +62,7 @@ traceroute to 192.168.3.1 (192.168.3.1), 30 hops max, 60 byte packets
  1  172.16.1.2 (172.16.1.2)  0.308 ms  0.159 ms  0.222 ms
  2  192.168.3.1 (192.168.3.1)  0.443 ms  0.288 ms  0.389 ms
 ```
-на роутере 3 цена линка с роутером 1 = 10  
+на Router3 цена линка eth1 с Router1 = 10  
 ```bash
 [vagrant@Router3 ~]$ ip ro
 default via 10.0.2.2 dev eth0 proto dhcp metric 100 
@@ -90,7 +83,7 @@ traceroute to 192.168.1.1 (192.168.1.1), 30 hops max, 60 byte packets
 ```
 
 ## Симметричный роутинг
-цену линка на роутере 3 делаю равной цене линка на роутере 1 - 100  
+цену линка eth1 на Router3 делаю равной цене линка eth2 на Router1 - 100  
 ```bash
 [vagrant@Router3 ~]$ ip ro
 default via 10.0.2.2 dev eth0 proto dhcp metric 100 
