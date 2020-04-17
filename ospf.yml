@@ -10,9 +10,17 @@
           state: present
           reload: yes
 
-      - name: disable routing filter
+      - name: disable eth1 routing filter
         sysctl:
-          name: net.ipv4.conf.all.rp_filter
+          name: net.ipv4.conf.eth1.rp_filter
+          value: "2"
+          sysctl_set: yes
+          state: present
+          reload: yes
+
+      - name: disable eth2 routing filter
+        sysctl:
+          name: net.ipv4.conf.eth2.rp_filter
           value: "2"
           sysctl_set: yes
           state: present
@@ -65,13 +73,13 @@
         with_items:
           - '{{ ospf }}'
 
-      - name: frr activate ospfd
+      - name: enable ospfd
         replace:
           path: /etc/frr/daemons
           regexp: 'ospfd=no'
           replace: 'ospfd=yes'
 
-      - name: ospfd enabled in systemd
+      - name: frr enabled
         systemd:
           name: frr
           enabled: true

@@ -43,6 +43,21 @@ network {{ item.lan }}  area 0.0.0.0
 network {{ item.wan1 }} area 0.0.0.0
 network {{ item.wan2 }} area 0.0.0.0
 ```
+после провижена FRR запущен  
+```bash
+[vagrant@Router1 ~]$ systemctl status frr
+● frr.service - FRRouting
+   Loaded: loaded (/usr/lib/systemd/system/frr.service; enabled; vendor preset: disabled)
+   Active: active (running) since Fri 2020-04-17 20:04:33 UTC; 35min ago
+     Docs: https://frrouting.readthedocs.io/en/latest/setup.html
+  Process: 7938 ExecStart=/usr/lib/frr/frrinit.sh start (code=exited, status=0/SUCCESS)
+   CGroup: /system.slice/frr.service
+           ├─7943 /usr/lib/frr/watchfrr -d zebra ospfd staticd
+           ├─7958 /usr/lib/frr/zebra -d -A 127.0.0.1 -s 90000000
+           ├─7962 /usr/lib/frr/ospfd -d -A 127.0.0.1
+           └─7965 /usr/lib/frr/staticd -d -A 127.0.0.1
+```
+
 ## Ассиметричный роутинг
 на Router1 цена линка eth2 с Router3 = 100  
 ```bash
